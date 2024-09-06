@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Test Clean Architecture</string>
+    <string name="nothing_found">nothing_found!!!!!!!</string>
+    <string name="something_went_wrong">something_went_wrong!!!!!!</string>
+</resources>
