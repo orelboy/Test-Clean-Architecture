@@ -1,7 +1,8 @@
-package com.practicum.testcleanarchitecture
+package com.practicum.testcleanarchitecture.ui.movies
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.practicum.testcleanarchitecture.domain.models.Movie
 
 class MoviesAdapter(private val clickListener: MovieClickListener) : RecyclerView.Adapter<MovieViewHolder>() {
 

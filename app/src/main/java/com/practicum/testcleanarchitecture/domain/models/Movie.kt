@@ -1,4 +1,4 @@
-package com.practicum.testcleanarchitecture
+package com.practicum.testcleanarchitecture.domain.models
 
 data class Movie(val id: String,
                  val resultType: String,
