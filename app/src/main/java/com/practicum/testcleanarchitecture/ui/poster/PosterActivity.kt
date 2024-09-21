@@ -2,9 +2,7 @@ package com.practicum.testcleanarchitecture.ui.poster
 
 import android.app.Activity
 import android.os.Bundle
-import android.widget.ImageView
-import com.bumptech.glide.Glide
-import com.practicum.testcleanarchitecture.Creator
+import com.practicum.testcleanarchitecture.util.Creator
 import com.practicum.testcleanarchitecture.R
 
 class PosterActivity : Activity() {

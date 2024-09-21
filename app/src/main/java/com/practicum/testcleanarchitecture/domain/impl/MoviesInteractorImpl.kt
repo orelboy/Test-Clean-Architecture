@@ -2,6 +2,7 @@ package com.practicum.testcleanarchitecture.domain.impl
 
 import com.practicum.testcleanarchitecture.domain.api.MoviesInteractor
 import com.practicum.testcleanarchitecture.domain.api.MoviesRepository
+import com.practicum.testcleanarchitecture.util.Resource
 import java.util.concurrent.Executors
 
 class MoviesInteractorImpl(private val repository: MoviesRepository) : MoviesInteractor {
@@ -10,16 +11,9 @@ class MoviesInteractorImpl(private val repository: MoviesRepository) : MoviesInt
 
     override fun searchMovies(expression: String, consumer: MoviesInteractor.MoviesConsumer) {
         executor.execute {
-            consumer.consume(repository.searchMovies(expression))
-        }
+            when(val resource = repository.searchMovies(expression)) {
+                is Resource.Success -> { consumer.consume(resource.data, null) }
+                is Resource.Error -> { consumer.consume(null, resource.message) }
+            }        }
     }
-    /*
-    или
-        override fun searchMovies(expression: String, consumer: MoviesInteractor.MoviesConsumer) {
-        val t = Thread {
-            consumer.consume(repository.searchMovies(expression))
-        }
-        t.start()
-    }
-     */
 }

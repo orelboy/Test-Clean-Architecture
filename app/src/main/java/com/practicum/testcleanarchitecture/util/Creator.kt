@@ -1,6 +1,7 @@
-package com.practicum.testcleanarchitecture
+package com.practicum.testcleanarchitecture.util
 
 import android.app.Activity
+import android.content.Context
 import com.practicum.testcleanarchitecture.data.MoviesRepositoryImpl
 import com.practicum.testcleanarchitecture.data.network.RetrofitNetworkClient
 import com.practicum.testcleanarchitecture.domain.api.MoviesInteractor
@@ -11,12 +12,12 @@ import com.practicum.testcleanarchitecture.presentation.PosterController
 import com.practicum.testcleanarchitecture.ui.movies.MoviesAdapter
 
 object Creator {
-    private fun getMoviesRepository(): MoviesRepository {
-        return MoviesRepositoryImpl(RetrofitNetworkClient())
+    private fun getMoviesRepository(context: Context): MoviesRepository {
+        return MoviesRepositoryImpl(RetrofitNetworkClient(context))
     }
 
-    fun provideMoviesInteractor(): MoviesInteractor {
-        return MoviesInteractorImpl(getMoviesRepository())
+    fun provideMoviesInteractor(context: Context): MoviesInteractor {
+        return MoviesInteractorImpl(getMoviesRepository(context))
     }
 
     fun provideMoviesSearchController(activity: Activity, adapter: MoviesAdapter): MoviesSearchController {
