@@ -6,6 +6,7 @@ import android.os.Looper
 import com.practicum.testcleanarchitecture.R
 import com.practicum.testcleanarchitecture.domain.api.MoviesInteractor
 import com.practicum.testcleanarchitecture.domain.models.Movie
+import com.practicum.testcleanarchitecture.ui.movies.models.MoviesState
 import com.practicum.testcleanarchitecture.util.Creator
 
 class MoviesSearchPresenter(
@@ -44,55 +45,66 @@ class MoviesSearchPresenter(
     private fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
 
-            view.showPlaceholderMessage(false)
-            view.showMoviesList(false)
-            view.showProgressBar(false)
+            view.render(
+                MoviesState.Loading
+            )
 
             moviesInteractor.searchMovies(
                 newSearchText,
                 object : MoviesInteractor.MoviesConsumer {
                     override fun consume(foundMovies: List<Movie>?, errorMessage: String?) {
                         handler.post {
-                            view.showProgressBar(false)
                             if (foundMovies != null) {
                                 movies.clear()
                                 movies.addAll(foundMovies)
-                                view.updateMoviesList(movies)
-                                view.showMoviesList(true)
                             }
 
-                            if (errorMessage != null) {
-                                showMessage(
-                                    context.getString(R.string.something_went_wrong),
-                                    errorMessage
-                                )
-                            } else
-                                if (movies.isEmpty()) {
-                                    showMessage(context.getString(R.string.nothing_found), "")
-                                } else {
-                                    hideMessage()
+                            when {
+                                errorMessage != null -> {
+                                    view.render(
+                                        MoviesState.Error(
+                                            errorMessage = context.getString(R.string.something_went_wrong),
+                                        )
+                                    )
+                                    view.showToast(errorMessage)
                                 }
+
+                                movies.isEmpty() -> {
+                                    view.render(
+                                        MoviesState.Empty(
+                                            message = context.getString(R.string.nothing_found),
+                                        )
+                                    )                                }
+
+                                else -> {
+                                    view.render(
+                                        MoviesState.Content(
+                                            movies = movies,
+                                        )
+                                    )
+                                }
+                            }
                         }
                     }
                 })
         }
     }
 
-    private fun showMessage(text: String, additionalMessage: String) {
-        if (text.isNotEmpty()) {
-            view.showPlaceholderMessage(true)
-            movies.clear()
-            view.updateMoviesList(movies)
-            view.changePlaceholderText(text)
-            if (additionalMessage.isNotEmpty()) {
-                view.showMessage(additionalMessage)
-            }
-        } else {
-            view.showPlaceholderMessage(false)
-        }
-    }
-
-    private fun hideMessage() {
-        view.showPlaceholderMessage(false)
-    }
+//    private fun showMessage(text: String, additionalMessage: String) {
+//        if (text.isNotEmpty()) {
+//            view.showPlaceholderMessage(true)
+//            movies.clear()
+//            view.updateMoviesList(movies)
+//            view.changePlaceholderText(text)
+//            if (additionalMessage.isNotEmpty()) {
+//                view.showMessage(additionalMessage)
+//            }
+//        } else {
+//            view.showPlaceholderMessage(false)
+//        }
+//    }
+//
+//    private fun hideMessage() {
+//        view.showPlaceholderMessage(false)
+//    }
 }

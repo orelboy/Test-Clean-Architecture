@@ -1,21 +1,29 @@
 package com.practicum.testcleanarchitecture.presentation.movies
 
 import com.practicum.testcleanarchitecture.domain.models.Movie
+import com.practicum.testcleanarchitecture.ui.movies.models.MoviesState
 
 interface MoviesView {
     // Сюда мы будем добавлять методы
     // для взаимодействия View и Presenter
 
-    fun showPlaceholderMessage(isVisible: Boolean)
+    // Методы, меняющие внешний вид экрана
+/*
+    // Состояние «загрузки»
+    fun showLoading()
 
-    fun showMoviesList(isVisible: Boolean)
+    // Состояние «ошибки»
+    fun showError(errorMessage: String)
 
-    fun showProgressBar(isVisible: Boolean)
+    // Состояние «пустого списка»
+    fun showEmpty(emptyMessage: String)
 
-    fun changePlaceholderText(newPlaceholderText: String)
+    // Состояние «контента»
+    fun showContent(movies: List<Movie>)
+*/
+    fun render(state: MoviesState)
 
-    fun updateMoviesList(newMoviesList: List<Movie>)
+    // Методы «одноразовых событий»
 
-    fun showMessage(message: String)
-
+    fun showToast(additionalMessage: String)
 }
