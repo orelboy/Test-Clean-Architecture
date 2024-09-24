@@ -14,10 +14,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.practicum.testcleanarchitecture.MoviesApplication
 import com.practicum.testcleanarchitecture.util.Creator
 import com.practicum.testcleanarchitecture.ui.poster.PosterActivity
 import com.practicum.testcleanarchitecture.R
 import com.practicum.testcleanarchitecture.domain.models.Movie
+import com.practicum.testcleanarchitecture.presentation.movies.MoviesSearchPresenter
 import com.practicum.testcleanarchitecture.presentation.movies.MoviesView
 import com.practicum.testcleanarchitecture.ui.movies.models.MoviesState
 
@@ -35,10 +37,7 @@ class MoviesActivity : Activity(), MoviesView {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private val moviesSearchPresenter = Creator.provideMoviesSearchPresenter(
-        moviesView = this,
-        context = this,
-    )
+    private var moviesSearchPresenter : MoviesSearchPresenter? = null
 
     private var textWatcher: TextWatcher? = null
 
@@ -51,10 +50,21 @@ class MoviesActivity : Activity(), MoviesView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movies)
 
+        moviesSearchPresenter = (this.applicationContext as? MoviesApplication)?.moviesSearchPresenter
+
+        if (moviesSearchPresenter == null) {
+            moviesSearchPresenter = Creator.provideMoviesSearchPresenter(
+                context = this.applicationContext,
+            )
+            (this.applicationContext as? MoviesApplication)?.moviesSearchPresenter = moviesSearchPresenter
+        }
+
         placeholderMessage = findViewById(R.id.placeholderMessage)
         queryInput = findViewById(R.id.queryInput)
         moviesList = findViewById(R.id.locations)
         progressBar = findViewById(R.id.progressBar)
+
+        moviesSearchPresenter?.attachView(this)
 
         moviesList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         moviesList.adapter = adapter
@@ -64,7 +74,7 @@ class MoviesActivity : Activity(), MoviesView {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 // Можно использовать changedText = s?.toString() ?: "" или так changedText = queryInput.text.toString()
-                moviesSearchPresenter.searchDebounce(
+                moviesSearchPresenter?.searchDebounce(
                     changedText = s?.toString() ?: ""
                 )
             }
@@ -75,10 +85,40 @@ class MoviesActivity : Activity(), MoviesView {
         textWatcher?.let { queryInput.addTextChangedListener(it) }
     }
 
+    override fun onStart() {
+        super.onStart()
+        moviesSearchPresenter?.attachView(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        moviesSearchPresenter?.attachView(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        moviesSearchPresenter?.detachView()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        moviesSearchPresenter?.detachView()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        moviesSearchPresenter?.detachView()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         textWatcher?.let { queryInput.removeTextChangedListener(it) }
-        moviesSearchPresenter.onDestroy()
+        moviesSearchPresenter?.detachView()
+        moviesSearchPresenter?.onDestroy()
+        if (isFinishing()) {
+            // Очищаем ссылку на Presenter в Application
+            (this.application as? MoviesApplication)?.moviesSearchPresenter = null
+        }
     }
 
     private fun clickDebounce(): Boolean {
