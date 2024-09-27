@@ -7,7 +7,6 @@ import com.practicum.testcleanarchitecture.domain.api.MoviesInteractor
 import com.practicum.testcleanarchitecture.domain.api.MoviesRepository
 import com.practicum.testcleanarchitecture.domain.impl.MoviesInteractorImpl
 import com.practicum.testcleanarchitecture.presentation.movies.MoviesSearchPresenter
-import com.practicum.testcleanarchitecture.presentation.movies.MoviesView
 import com.practicum.testcleanarchitecture.presentation.poster.PosterPresenter
 import com.practicum.testcleanarchitecture.presentation.poster.PosterView
 
