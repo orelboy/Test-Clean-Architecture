@@ -26,13 +26,24 @@ class MoviesActivity : ComponentActivity() {
 
     private lateinit var viewModel: MoviesSearchViewModel
 
-    private val adapter = MoviesAdapter {
-        if (clickDebounce()) {
-            val intent = Intent(this, PosterActivity::class.java)
-            intent.putExtra("poster", it.image)
-            startActivity(intent)
+    private val adapter = MoviesAdapter (
+        object : MoviesAdapter.MovieClickListener {
+
+            override fun onMovieClick(movie: Movie) {
+                if (clickDebounce()) {
+                    val intent = Intent(this@MoviesActivity, PosterActivity::class.java)
+                    intent.putExtra("poster", movie.image)
+                    startActivity(intent)
+                }
+            }
+
+            override fun onFavoriteToggleClick(movie: Movie) {
+                // 1
+                viewModel.toggleFavorite(movie)
+            }
+
         }
-    }
+    )
 
     private lateinit var queryInput: EditText
     private lateinit var placeholderMessage: TextView

@@ -2,6 +2,7 @@ package com.practicum.testcleanarchitecture.domain.impl
 
 import com.practicum.testcleanarchitecture.domain.api.MoviesInteractor
 import com.practicum.testcleanarchitecture.domain.api.MoviesRepository
+import com.practicum.testcleanarchitecture.domain.models.Movie
 import com.practicum.testcleanarchitecture.util.Resource
 import java.util.concurrent.Executors
 
@@ -15,5 +16,13 @@ class MoviesInteractorImpl(private val repository: MoviesRepository) : MoviesInt
                 is Resource.Success -> { consumer.consume(resource.data, null) }
                 is Resource.Error -> { consumer.consume(null, resource.message) }
             }        }
+    }
+
+    override fun addMovieToFavorites(movie: Movie) {
+        repository.addMovieToFavorites(movie)
+    }
+
+    override fun removeMovieFromFavorites(movie: Movie) {
+        repository.removeMovieFromFavorites(movie)
     }
 }
