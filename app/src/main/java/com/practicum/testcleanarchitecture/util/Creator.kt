@@ -6,7 +6,7 @@ import com.practicum.testcleanarchitecture.data.network.RetrofitNetworkClient
 import com.practicum.testcleanarchitecture.domain.api.MoviesInteractor
 import com.practicum.testcleanarchitecture.domain.api.MoviesRepository
 import com.practicum.testcleanarchitecture.domain.impl.MoviesInteractorImpl
-import com.practicum.testcleanarchitecture.presentation.movies.MoviesSearchPresenter
+import com.practicum.testcleanarchitecture.presentation.movies.MoviesSearchViewModel
 import com.practicum.testcleanarchitecture.presentation.poster.PosterPresenter
 import com.practicum.testcleanarchitecture.presentation.poster.PosterView
 
@@ -17,14 +17,6 @@ object Creator {
 
     fun provideMoviesInteractor(context: Context): MoviesInteractor {
         return MoviesInteractorImpl(getMoviesRepository(context))
-    }
-
-    fun provideMoviesSearchPresenter(
-        context: Context
-    ): MoviesSearchPresenter {
-        return MoviesSearchPresenter(
-            context = context,
-        )
     }
 
     fun providePosterPresenter(
