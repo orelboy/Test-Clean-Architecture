@@ -20,10 +20,9 @@ import com.practicum.testcleanarchitecture.R
 import com.practicum.testcleanarchitecture.domain.models.Movie
 import com.practicum.testcleanarchitecture.presentation.movies.MoviesSearchViewModel
 import com.practicum.testcleanarchitecture.ui.movies.models.MoviesState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MoviesActivity : ComponentActivity() {
-
-    private lateinit var viewModel: MoviesSearchViewModel
 
     private val adapter = MoviesAdapter (
         object : MoviesAdapter.MovieClickListener {
@@ -54,11 +53,11 @@ class MoviesActivity : ComponentActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
 
+    private val viewModel by viewModel<MoviesSearchViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movies)
-
-        viewModel = ViewModelProvider(this, MoviesSearchViewModel.getViewModelFactory())[MoviesSearchViewModel::class.java]
 
         placeholderMessage = findViewById(R.id.placeholderMessage)
         queryInput = findViewById(R.id.queryInput)
@@ -87,9 +86,7 @@ class MoviesActivity : ComponentActivity() {
         viewModel.observeState().observe(this) {
             render(it)
         }
-//        viewModel.observeToastState().observe(this) {
-//            showToast(it)
-//        }
+
         viewModel.observeShowToast().observe(this) { toast ->
             showToast(toast)
         }

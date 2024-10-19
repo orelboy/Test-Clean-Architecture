@@ -1,4 +1,4 @@
-package com.practicum.testcleanarchitecture.presentation.movies
+package com.practicum.testcleanarchitecture.util
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData

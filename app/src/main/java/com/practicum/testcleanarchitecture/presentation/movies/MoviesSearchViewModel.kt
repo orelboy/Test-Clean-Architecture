@@ -8,35 +8,27 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
 import com.practicum.testcleanarchitecture.R
 import com.practicum.testcleanarchitecture.domain.api.MoviesInteractor
 import com.practicum.testcleanarchitecture.domain.models.Movie
 import com.practicum.testcleanarchitecture.ui.movies.models.MoviesState
-import com.practicum.testcleanarchitecture.util.Creator
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import com.practicum.testcleanarchitecture.util.SingleLiveEvent
+
 
 class MoviesSearchViewModel(
+    private val moviesInteractor: MoviesInteractor,
     application: Application,
 ) : AndroidViewModel(application) {
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
-
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                MoviesSearchViewModel(this[APPLICATION_KEY] as Application)
-            }
-        }
     }
 
-    private val moviesInteractor = Creator.provideMoviesInteractor(getApplication<Application>())
     private val handler = Handler(Looper.getMainLooper())
 
     private val stateLiveData = MutableLiveData<MoviesState>()
+    fun observeState(): LiveData<MoviesState> = mediatorStateLiveData
 
     private val mediatorStateLiveData = MediatorLiveData<MoviesState>().also { liveData ->
 
@@ -50,11 +42,6 @@ class MoviesSearchViewModel(
             }
         }
     }
-
-    fun observeState(): LiveData<MoviesState> = mediatorStateLiveData
-
-//    private val toastState = MutableLiveData<String>()
-//    fun observeToastState(): LiveData<String> = toastState
 
     private val showToast = SingleLiveEvent<String>()
     fun observeShowToast(): LiveData<String> = showToast
@@ -104,7 +91,7 @@ class MoviesSearchViewModel(
                                         errorMessage = getApplication<Application>().getString(R.string.something_went_wrong),
                                     )
                                 )
-                                showToast.postValue(errorMessage)
+                                showToast.postValue(errorMessage!!)
                             }
 
                             movies.isEmpty() -> {

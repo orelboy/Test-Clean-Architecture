@@ -2,6 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:padding="8dp"
     android:layout_marginBottom="8dp"
@@ -10,7 +11,7 @@
     <ImageView android:id="@+id/cover"
         android:layout_width="120dp"
         android:layout_height="180dp"
-
+        tools:src="@drawable/ic_launcher_background"
         android:scaleType="centerCrop"/>
 
     <LinearLayout android:layout_width="wrap_content"
@@ -18,6 +19,7 @@
         android:orientation="vertical">
 
         <TextView android:id="@+id/title"
+            tools:text="TITLE"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
@@ -26,6 +28,7 @@
             android:textStyle="bold"/>
 
         <TextView android:id="@+id/description"
+            tools:text="DESCRIPTION"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
