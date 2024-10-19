@@ -12,7 +12,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.testcleanarchitecture.ui.poster.DetailsActivity
@@ -31,6 +30,7 @@ class MoviesActivity : ComponentActivity() {
                 if (clickDebounce()) {
                     val intent = Intent(this@MoviesActivity, DetailsActivity::class.java)
                     intent.putExtra("poster", movie.image)
+                    intent.putExtra("id", movie.id)
                     startActivity(intent)
                 }
             }
