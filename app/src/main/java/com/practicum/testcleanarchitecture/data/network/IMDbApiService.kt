@@ -1,5 +1,6 @@
 package com.practicum.testcleanarchitecture.data.network
 
+import com.practicum.testcleanarchitecture.data.dto.MovieDetailsResponse
 import com.practicum.testcleanarchitecture.data.dto.MoviesSearchResponse
 import retrofit2.Call
 import retrofit2.http.GET
@@ -10,4 +11,7 @@ interface IMDbApiService {
     fun searchMovies(
         @Path("expression") expression: String
     ): Call<MoviesSearchResponse>
+
+    @GET("/en/API/Title/YOUR_API_KEY/{movie_id}")
+    fun getMovieDetails(@Path("movie_id") movieId: String): Call<MovieDetailsResponse>
 }

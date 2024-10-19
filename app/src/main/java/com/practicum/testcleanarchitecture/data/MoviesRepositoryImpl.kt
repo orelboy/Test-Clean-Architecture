@@ -1,9 +1,12 @@
 package com.practicum.testcleanarchitecture.data
 
+import com.practicum.testcleanarchitecture.data.dto.MovieDetailsRequest
+import com.practicum.testcleanarchitecture.data.dto.MovieDetailsResponse
 import com.practicum.testcleanarchitecture.data.dto.MoviesSearchRequest
 import com.practicum.testcleanarchitecture.data.dto.MoviesSearchResponse
 import com.practicum.testcleanarchitecture.domain.api.MoviesRepository
 import com.practicum.testcleanarchitecture.domain.models.Movie
+import com.practicum.testcleanarchitecture.domain.models.MovieDetails
 import com.practicum.testcleanarchitecture.util.Resource
 
 class MoviesRepositoryImpl(
@@ -37,6 +40,41 @@ class MoviesRepositoryImpl(
             }
         }
     }
+
+    override fun getMovieDetails(movieId: String): Resource<MovieDetails> {
+        val response = networkClient.doRequest(MovieDetailsRequest(movieId))
+        return when (response.resultCode) {
+            -1 -> {
+                Resource.Error("Проверьте подключение к интернету")
+            }
+
+            200 -> {
+                with(response as MovieDetailsResponse) {
+                    Resource.Success(
+                        MovieDetails(
+                            id = id,
+                            title = title,
+                            imDbRating = imDbRating,
+                            year = year,
+                            countries = countries,
+                            genres = genres,
+                            directors = directors,
+                            writers = writers,
+                            stars = stars,
+                            plot = plot,
+                        )
+                    )
+                }
+            }
+
+            else -> {
+                Resource.Error("Ошибка сервера")
+
+            }
+        }
+    }
+
+
     override fun addMovieToFavorites(movie: Movie) {
         localStorage.addToFavorites(movie.id)
     }

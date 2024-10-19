@@ -15,12 +15,11 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.testcleanarchitecture.ui.poster.PosterActivity
+import com.practicum.testcleanarchitecture.ui.poster.DetailsActivity
 import com.practicum.testcleanarchitecture.R
 import com.practicum.testcleanarchitecture.domain.models.Movie
 import com.practicum.testcleanarchitecture.presentation.movies.MoviesSearchViewModel
 import com.practicum.testcleanarchitecture.ui.movies.models.MoviesState
-import moxy.presenter.InjectPresenter
 
 class MoviesActivity : ComponentActivity() {
 
@@ -31,7 +30,7 @@ class MoviesActivity : ComponentActivity() {
 
             override fun onMovieClick(movie: Movie) {
                 if (clickDebounce()) {
-                    val intent = Intent(this@MoviesActivity, PosterActivity::class.java)
+                    val intent = Intent(this@MoviesActivity, DetailsActivity::class.java)
                     intent.putExtra("poster", movie.image)
                     startActivity(intent)
                 }
