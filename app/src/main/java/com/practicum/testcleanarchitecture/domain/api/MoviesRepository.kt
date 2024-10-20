@@ -1,6 +1,7 @@
 package com.practicum.testcleanarchitecture.domain.api
 
 import com.practicum.testcleanarchitecture.domain.models.Movie
+import com.practicum.testcleanarchitecture.domain.models.MovieCast
 import com.practicum.testcleanarchitecture.domain.models.MovieDetails
 import com.practicum.testcleanarchitecture.util.Resource
 
@@ -10,4 +11,6 @@ interface MoviesRepository {
     fun removeMovieFromFavorites(movie: Movie)
 
     fun getMovieDetails(movieId: String): Resource<MovieDetails>
+    fun getMovieCast(movieId: String): Resource<MovieCast>
+
 }

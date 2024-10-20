@@ -1,6 +1,7 @@
 package com.practicum.testcleanarchitecture.presentation.movies
 
 import android.app.Application
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -8,17 +9,18 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.practicum.testcleanarchitecture.R
 import com.practicum.testcleanarchitecture.domain.api.MoviesInteractor
 import com.practicum.testcleanarchitecture.domain.models.Movie
-import com.practicum.testcleanarchitecture.ui.movies.models.MoviesState
+import com.practicum.testcleanarchitecture.presentation.movies.models.MoviesState
 import com.practicum.testcleanarchitecture.util.SingleLiveEvent
 
 
 class MoviesSearchViewModel(
+    private val context: Context,
     private val moviesInteractor: MoviesInteractor,
-    application: Application,
-) : AndroidViewModel(application) {
+) : ViewModel()  {
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
@@ -88,7 +90,7 @@ class MoviesSearchViewModel(
                             errorMessage != null -> {
                                 renderState(
                                     MoviesState.Error(
-                                        errorMessage = getApplication<Application>().getString(R.string.something_went_wrong),
+                                        errorMessage = context.getString(R.string.something_went_wrong),
                                     )
                                 )
                                 showToast.postValue(errorMessage!!)
@@ -97,7 +99,7 @@ class MoviesSearchViewModel(
                             movies.isEmpty() -> {
                                 renderState(
                                     MoviesState.Empty(
-                                        message = getApplication<Application>().getString(R.string.nothing_found),
+                                        message = context.getString(R.string.nothing_found),
                                     )
                                 )
                             }

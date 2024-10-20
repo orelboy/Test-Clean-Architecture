@@ -1,4 +1,4 @@
-package com.practicum.testcleanarchitecture.presentation.poster
+package com.practicum.testcleanarchitecture.presentation.details
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

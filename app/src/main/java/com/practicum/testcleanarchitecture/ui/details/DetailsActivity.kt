@@ -1,11 +1,10 @@
-package com.practicum.testcleanarchitecture.ui.poster
+package com.practicum.testcleanarchitecture.ui.details
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import com.practicum.testcleanarchitecture.R
 import com.practicum.testcleanarchitecture.databinding.ActivityDetailsBinding
-import com.practicum.testcleanarchitecture.presentation.poster.DetailsViewPagerAdapter
 
 
 class DetailsActivity : AppCompatActivity() {

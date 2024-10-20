@@ -1,4 +1,4 @@
-package com.practicum.testcleanarchitecture.presentation.poster
+package com.practicum.testcleanarchitecture.ui.details
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.practicum.testcleanarchitecture.databinding.FragmentPosterBinding
+import com.practicum.testcleanarchitecture.presentation.details.PosterViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 

@@ -1,4 +1,4 @@
-package com.practicum.testcleanarchitecture.presentation.poster
+package com.practicum.testcleanarchitecture.ui.details
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.practicum.testcleanarchitecture.databinding.FragmentAboutBinding
 import com.practicum.testcleanarchitecture.domain.models.MovieDetails
-import com.practicum.testcleanarchitecture.ui.poster.models.AboutState
+import com.practicum.testcleanarchitecture.presentation.details.AboutViewModel
+import com.practicum.testcleanarchitecture.ui.cast.MoviesCastActivity
+import com.practicum.testcleanarchitecture.presentation.details.models.AboutState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -46,6 +48,15 @@ class AboutFragment : Fragment() {
                 is AboutState.Content -> showDetails(it.movie)
                 is AboutState.Error -> showErrorMessage(it.message)
             }
+        }
+
+        binding.showCastButton.setOnClickListener {
+            startActivity(
+                MoviesCastActivity.newInstance(
+                    context = requireContext(),
+                    movieId = requireArguments().getString(MOVIE_ID).orEmpty()
+                )
+            )
         }
     }
 

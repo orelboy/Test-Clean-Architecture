@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.practicum.testcleanarchitecture.data.NetworkClient
+import com.practicum.testcleanarchitecture.data.dto.MovieCastRequest
 import com.practicum.testcleanarchitecture.data.dto.MovieDetailsRequest
 import com.practicum.testcleanarchitecture.data.dto.MoviesSearchRequest
 import com.practicum.testcleanarchitecture.data.dto.Response
@@ -18,15 +19,25 @@ class RetrofitNetworkClient(
         if (isConnected() == false) {
             return Response().apply { resultCode = -1 }
         }
-        if ((dto !is MoviesSearchRequest) && (dto !is MovieDetailsRequest)) {
+        // Добавили ещё одну проверку
+        if ((dto !is MoviesSearchRequest) && (dto !is MovieDetailsRequest) && (dto !is MovieCastRequest)) {
             return Response().apply { resultCode = 400 }
         }
 
-        val response = if (dto is MoviesSearchRequest) {
-            imdbService.searchMovies(dto.expression).execute()
-        } else {
-            imdbService.getMovieDetails((dto as MovieDetailsRequest).movieId).execute()
+        val response = when (dto) {
+            is MoviesSearchRequest -> {
+                imdbService.searchMovies(dto.expression).execute()
+            }
+
+            is MovieDetailsRequest -> {
+                imdbService.getMovieDetails(dto.movieId).execute()
+            }
+
+            else -> {
+                imdbService.getFullCast((dto as MovieCastRequest).movieId).execute()
+            }
         }
+
         val body = response.body()
         return if (body != null) {
             body.apply { resultCode = response.code() }

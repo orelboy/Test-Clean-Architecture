@@ -1,4 +1,4 @@
-package com.practicum.testcleanarchitecture.ui.poster.models
+package com.practicum.testcleanarchitecture.presentation.details.models
 
 import com.practicum.testcleanarchitecture.domain.models.MovieDetails
 

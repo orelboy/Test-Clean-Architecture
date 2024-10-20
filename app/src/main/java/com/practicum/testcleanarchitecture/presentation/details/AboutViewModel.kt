@@ -1,11 +1,11 @@
-package com.practicum.testcleanarchitecture.presentation.poster
+package com.practicum.testcleanarchitecture.presentation.details
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.practicum.testcleanarchitecture.domain.api.MoviesInteractor
 import com.practicum.testcleanarchitecture.domain.models.MovieDetails
-import com.practicum.testcleanarchitecture.ui.poster.models.AboutState
+import com.practicum.testcleanarchitecture.presentation.details.models.AboutState
 
 class AboutViewModel(private val movieId: String,
                      private val moviesInteractor: MoviesInteractor, ) : ViewModel() {

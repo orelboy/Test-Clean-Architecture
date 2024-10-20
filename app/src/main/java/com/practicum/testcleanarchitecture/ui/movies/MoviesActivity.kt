@@ -14,14 +14,16 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.testcleanarchitecture.ui.poster.DetailsActivity
+import com.practicum.testcleanarchitecture.ui.details.DetailsActivity
 import com.practicum.testcleanarchitecture.R
 import com.practicum.testcleanarchitecture.domain.models.Movie
 import com.practicum.testcleanarchitecture.presentation.movies.MoviesSearchViewModel
-import com.practicum.testcleanarchitecture.ui.movies.models.MoviesState
+import com.practicum.testcleanarchitecture.presentation.movies.models.MoviesState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MoviesActivity : ComponentActivity() {
+
+    private val viewModel by viewModel<MoviesSearchViewModel>()
 
     private val adapter = MoviesAdapter (
         object : MoviesAdapter.MovieClickListener {
@@ -52,8 +54,6 @@ class MoviesActivity : ComponentActivity() {
     private var isClickAllowed = true
 
     private val handler = Handler(Looper.getMainLooper())
-
-    private val viewModel by viewModel<MoviesSearchViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,4 +1,4 @@
-package com.practicum.testcleanarchitecture.presentation.poster
+package com.practicum.testcleanarchitecture.ui.details
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

@@ -1,17 +1,23 @@
 package com.practicum.testcleanarchitecture.data
 
+import com.practicum.testcleanarchitecture.data.converters.MovieCastConverter
+import com.practicum.testcleanarchitecture.data.dto.MovieCastRequest
+import com.practicum.testcleanarchitecture.data.dto.MovieCastResponse
 import com.practicum.testcleanarchitecture.data.dto.MovieDetailsRequest
 import com.practicum.testcleanarchitecture.data.dto.MovieDetailsResponse
 import com.practicum.testcleanarchitecture.data.dto.MoviesSearchRequest
 import com.practicum.testcleanarchitecture.data.dto.MoviesSearchResponse
 import com.practicum.testcleanarchitecture.domain.api.MoviesRepository
 import com.practicum.testcleanarchitecture.domain.models.Movie
+import com.practicum.testcleanarchitecture.domain.models.MovieCast
+import com.practicum.testcleanarchitecture.domain.models.MovieCastPerson
 import com.practicum.testcleanarchitecture.domain.models.MovieDetails
 import com.practicum.testcleanarchitecture.util.Resource
 
 class MoviesRepositoryImpl(
     private val networkClient: NetworkClient,
     private val localStorage: LocalStorage,
+    private val movieCastConverter: MovieCastConverter,
     ) : MoviesRepository {
 
     override fun searchMovies(expression: String): Resource<List<Movie>> {
@@ -70,6 +76,26 @@ class MoviesRepositoryImpl(
             else -> {
                 Resource.Error("Ошибка сервера")
 
+            }
+        }
+    }
+
+    // Добавили новый метод для получения состава участников
+    override fun getMovieCast(movieId: String): Resource<MovieCast> {
+        // Поменяли объект dto на нужный Request-объект
+        val response = networkClient.doRequest(MovieCastRequest(movieId))
+        return when (response.resultCode) {
+            -1 -> {
+                Resource.Error("Проверьте подключение к интернету")
+            }
+            200 -> {
+                // Осталось написать конвертацию!
+                Resource.Success(
+                    data = movieCastConverter.convert(response as MovieCastResponse)
+                )
+            }
+            else -> {
+                Resource.Error("Ошибка сервера")
             }
         }
     }
