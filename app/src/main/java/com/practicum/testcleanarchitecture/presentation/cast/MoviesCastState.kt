@@ -6,8 +6,10 @@ sealed interface MoviesCastState {
 
     object Loading : MoviesCastState
 
+    // Вместо объекта MovieCast появились два поля
     data class Content(
-        val movie: MovieCast,
+        val fullTitle: String,
+        val items: List<MoviesCastRVItem>,
     ) : MoviesCastState
 
     data class Error(
