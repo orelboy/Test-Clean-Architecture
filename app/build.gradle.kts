@@ -64,4 +64,10 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
     implementation("io.insert-koin:koin-android:3.3.0")
+
+    // Подключаем основную библиотеку
+    implementation("com.hannesdorfmann:adapterdelegates4-kotlin-dsl:4.3.2")
+    // Подключаем модуль для работы с ViewBinding
+    implementation("com.hannesdorfmann:adapterdelegates4-kotlin-dsl-viewbinding:4.3.2")
+
 }

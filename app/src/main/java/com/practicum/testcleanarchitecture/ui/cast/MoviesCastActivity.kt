@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import com.practicum.testcleanarchitecture.R
 import com.practicum.testcleanarchitecture.databinding.ActivityMoviesCastBinding
 import com.practicum.testcleanarchitecture.presentation.cast.MoviesCastState
@@ -33,8 +34,10 @@ class MoviesCastActivity : AppCompatActivity(R.layout.activity_movies_cast) {
     }
 
     // Добавили адаптер для RecyclerView
-    private val adapter = MoviesCastAdapter()
-
+    private val adapter = ListDelegationAdapter(
+        movieCastHeaderDelegate(),
+        movieCastPersonDelegate(),
+    )
     private lateinit var binding : ActivityMoviesCastBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
