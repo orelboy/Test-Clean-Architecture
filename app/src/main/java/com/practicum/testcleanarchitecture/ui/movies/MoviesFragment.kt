@@ -1,27 +1,30 @@
 package com.practicum.testcleanarchitecture.ui.movies
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.testcleanarchitecture.ui.details.DetailsActivity
 import com.practicum.testcleanarchitecture.R
+import com.practicum.testcleanarchitecture.databinding.FragmentMoviesBinding
 import com.practicum.testcleanarchitecture.domain.models.Movie
 import com.practicum.testcleanarchitecture.presentation.movies.MoviesSearchViewModel
 import com.practicum.testcleanarchitecture.presentation.movies.models.MoviesState
+import com.practicum.testcleanarchitecture.ui.details.DetailsFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MoviesActivity : ComponentActivity() {
+class MoviesFragment : Fragment(){
 
     private val viewModel by viewModel<MoviesSearchViewModel>()
 
@@ -30,10 +33,25 @@ class MoviesActivity : ComponentActivity() {
 
             override fun onMovieClick(movie: Movie) {
                 if (clickDebounce()) {
-                    val intent = Intent(this@MoviesActivity, DetailsActivity::class.java)
-                    intent.putExtra("poster", movie.image)
-                    intent.putExtra("id", movie.id)
-                    startActivity(intent)
+
+                    // Навигируемся на следующий экран
+                    parentFragmentManager.commit {
+                        replace(
+                            // Указали, в каком контейнере работаем
+                            R.id.rootFragmentContainerView,
+                            // Создали фрагмент
+                            DetailsFragment.newInstance(
+                                movieId = movie.id,
+                                posterUrl = movie.image
+                            ),
+                            // Указали тег фрагмента
+                            DetailsFragment.TAG
+                        )
+
+                        // Добавляем фрагмент в Back Stack
+                        addToBackStack(DetailsFragment.TAG)
+                    }
+
                 }
             }
 
@@ -45,6 +63,10 @@ class MoviesActivity : ComponentActivity() {
         }
     )
 
+    private val handler = Handler(Looper.getMainLooper())
+
+    private lateinit var binding: FragmentMoviesBinding
+
     private lateinit var queryInput: EditText
     private lateinit var placeholderMessage: TextView
     private lateinit var moviesList: RecyclerView
@@ -53,18 +75,21 @@ class MoviesActivity : ComponentActivity() {
 
     private var isClickAllowed = true
 
-    private val handler = Handler(Looper.getMainLooper())
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentMoviesBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_movies)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        placeholderMessage = findViewById(R.id.placeholderMessage)
-        queryInput = findViewById(R.id.queryInput)
-        moviesList = findViewById(R.id.locations)
-        progressBar = findViewById(R.id.progressBar)
+        placeholderMessage = binding.placeholderMessage
+        queryInput = binding.queryInput
+        moviesList = binding.locations
+        progressBar = binding.progressBar
 
-        moviesList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        // Здесь пришлось поправить использование Context
+        moviesList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         moviesList.adapter = adapter
 
         textWatcher = object : TextWatcher {
@@ -72,7 +97,6 @@ class MoviesActivity : ComponentActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Можно использовать changedText = s?.toString() ?: "" или так changedText = queryInput.text.toString()
                 viewModel.searchDebounce(
                     changedText = s?.toString() ?: ""
                 )
@@ -81,32 +105,35 @@ class MoviesActivity : ComponentActivity() {
             override fun afterTextChanged(s: Editable?) {
             }
         }
-        textWatcher.let { queryInput.addTextChangedListener(it) }
+        textWatcher?.let { queryInput.addTextChangedListener(it) }
 
-        viewModel.observeState().observe(this) {
+        // Здесь пришлось заменить LifecycleOwner на ViewLifecycleOwner
+        viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
 
-        viewModel.observeShowToast().observe(this) { toast ->
-            showToast(toast)
+        // Здесь пришлось заменить LifecycleOwner на ViewLifecycleOwner
+        viewModel.observeShowToast().observe(viewLifecycleOwner) {
+            showToast(it)
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        textWatcher.let { queryInput.removeTextChangedListener(it) }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        textWatcher?.let { queryInput.removeTextChangedListener(it) }
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    private fun showToast(additionalMessage: String?) {
+        // Здесь пришлось поправить использование Context
+        Toast.makeText(requireContext(), additionalMessage, Toast.LENGTH_LONG).show()
     }
 
     private fun render(state: MoviesState) {
         when (state) {
-            is MoviesState.Loading -> showLoading()
             is MoviesState.Content -> showContent(state.movies)
-            is MoviesState.Error -> showError(state.errorMessage)
             is MoviesState.Empty -> showEmpty(state.message)
+            is MoviesState.Error -> showError(state.errorMessage)
+            is MoviesState.Loading -> showLoading()
         }
     }
 
@@ -150,4 +177,5 @@ class MoviesActivity : ComponentActivity() {
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
+
 }
