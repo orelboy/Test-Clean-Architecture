@@ -7,11 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.practicum.testcleanarchitecture.R
+import com.practicum.testcleanarchitecture.data.core.navigation.Router
 import com.practicum.testcleanarchitecture.databinding.FragmentAboutBinding
 import com.practicum.testcleanarchitecture.domain.models.MovieDetails
 import com.practicum.testcleanarchitecture.presentation.details.AboutViewModel
 import com.practicum.testcleanarchitecture.presentation.details.models.AboutState
 import com.practicum.testcleanarchitecture.ui.cast.MoviesCastFragment
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -32,6 +34,7 @@ class AboutFragment : Fragment() {
     }
 
     private lateinit var binding: FragmentAboutBinding
+    private val router : Router by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,17 +56,12 @@ class AboutFragment : Fragment() {
         }
 
         binding.showCastButton.setOnClickListener {
-            // Осуществляем навигацию
-            parentFragment?.parentFragmentManager?.commit {
-            replace(
-                    R.id.rootFragmentContainerView,
-                    MoviesCastFragment.newInstance(
-                        movieId = requireArguments().getString(MOVIE_ID).orEmpty()
-                    ),
-                    MoviesCastFragment.TAG
+            // Переходим на следующий экран с помощью Router
+            router.openFragment(
+                MoviesCastFragment.newInstance(
+                    movieId = requireArguments().getString(MOVIE_ID).orEmpty()
                 )
-                addToBackStack(MoviesCastFragment.TAG)
-            }
+            )
 
         }
     }
