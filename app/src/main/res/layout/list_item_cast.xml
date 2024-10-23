@@ -6,7 +6,9 @@
     android:layout_height="wrap_content"
     android:background="#eeeeee"
     android:orientation="horizontal"
-    android:padding="16dp">
+    android:padding="16dp"
+    tools:context="com.practicum.testcleanarchitecture.ui.cast.MoviesCastFragment">
+
 
     <!-- Изображение, доступно только для актёров -->
     <ImageView

@@ -5,15 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
+import androidx.navigation.fragment.findNavController
 import com.practicum.testcleanarchitecture.R
-import com.practicum.testcleanarchitecture.data.core.navigation.Router
 import com.practicum.testcleanarchitecture.databinding.FragmentAboutBinding
 import com.practicum.testcleanarchitecture.domain.models.MovieDetails
 import com.practicum.testcleanarchitecture.presentation.details.AboutViewModel
 import com.practicum.testcleanarchitecture.presentation.details.models.AboutState
 import com.practicum.testcleanarchitecture.ui.cast.MoviesCastFragment
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -34,7 +32,6 @@ class AboutFragment : Fragment() {
     }
 
     private lateinit var binding: FragmentAboutBinding
-    private val router : Router by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,14 +53,10 @@ class AboutFragment : Fragment() {
         }
 
         binding.showCastButton.setOnClickListener {
-            // Переходим на следующий экран с помощью Router
-            router.openFragment(
-                MoviesCastFragment.newInstance(
-                    movieId = requireArguments().getString(MOVIE_ID).orEmpty()
-                )
-            )
-
+            findNavController().navigate(R.id.action_detailsFragment_to_moviesCastFragment,
+                MoviesCastFragment.createArgs(requireArguments().getString(MOVIE_ID).orEmpty()))
         }
+
     }
 
     private fun showErrorMessage(message: String) {

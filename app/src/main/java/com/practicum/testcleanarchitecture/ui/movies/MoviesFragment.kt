@@ -13,41 +13,30 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.testcleanarchitecture.R
-import com.practicum.testcleanarchitecture.data.core.navigation.Router
 import com.practicum.testcleanarchitecture.databinding.FragmentMoviesBinding
 import com.practicum.testcleanarchitecture.domain.models.Movie
 import com.practicum.testcleanarchitecture.presentation.movies.MoviesSearchViewModel
 import com.practicum.testcleanarchitecture.presentation.movies.models.MoviesState
 import com.practicum.testcleanarchitecture.ui.details.DetailsFragment
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MoviesFragment : Fragment(){
 
     private val viewModel by viewModel<MoviesSearchViewModel>()
-    private val router: Router by inject()
 
     private val adapter = MoviesAdapter (
         object : MoviesAdapter.MovieClickListener {
 
             override fun onMovieClick(movie: Movie) {
                 if (clickDebounce()) {
-
-                    // Переходим на следующий экран с помощью Router
-                    router.openFragment(
-                        DetailsFragment.newInstance(
-                            movieId = movie.id,
-                            posterUrl = movie.image
-                        )
-                    )
+                    findNavController().navigate(R.id.action_moviesFragment_to_detailsFragment,
+                        DetailsFragment.createArgs(movie.id, movie.image))
 
                 }
-
-
             }
 
             override fun onFavoriteToggleClick(movie: Movie) {
