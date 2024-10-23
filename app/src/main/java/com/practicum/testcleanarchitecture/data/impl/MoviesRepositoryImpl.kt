@@ -1,5 +1,7 @@
-package com.practicum.testcleanarchitecture.data
+package com.practicum.testcleanarchitecture.data.impl
 
+import com.practicum.testcleanarchitecture.data.LocalStorage
+import com.practicum.testcleanarchitecture.data.NetworkClient
 import com.practicum.testcleanarchitecture.data.converters.MovieCastConverter
 import com.practicum.testcleanarchitecture.data.dto.MovieCastRequest
 import com.practicum.testcleanarchitecture.data.dto.MovieCastResponse
@@ -10,7 +12,6 @@ import com.practicum.testcleanarchitecture.data.dto.MoviesSearchResponse
 import com.practicum.testcleanarchitecture.domain.api.MoviesRepository
 import com.practicum.testcleanarchitecture.domain.models.Movie
 import com.practicum.testcleanarchitecture.domain.models.MovieCast
-import com.practicum.testcleanarchitecture.domain.models.MovieCastPerson
 import com.practicum.testcleanarchitecture.domain.models.MovieDetails
 import com.practicum.testcleanarchitecture.util.Resource
 

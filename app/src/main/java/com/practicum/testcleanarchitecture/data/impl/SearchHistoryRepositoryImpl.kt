@@ -1,4 +1,4 @@
-package com.practicum.testcleanarchitecture.data
+package com.practicum.testcleanarchitecture.data.impl
 
 import com.practicum.testcleanarchitecture.domain.api.SearchHistoryRepository
 

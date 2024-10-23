@@ -4,6 +4,7 @@ import com.practicum.testcleanarchitecture.presentation.cast.MoviesCastViewModel
 import com.practicum.testcleanarchitecture.presentation.movies.MoviesSearchViewModel
 import com.practicum.testcleanarchitecture.presentation.details.PosterViewModel
 import com.practicum.testcleanarchitecture.presentation.details.AboutViewModel
+import com.practicum.testcleanarchitecture.presentation.names.NamesViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -29,4 +30,9 @@ val viewModelModule = module {
     viewModel { (movieId: String) ->
         MoviesCastViewModel(movieId, get())
     }
+
+    viewModel {
+        NamesViewModel(androidContext(), get())
+    }
+
 }

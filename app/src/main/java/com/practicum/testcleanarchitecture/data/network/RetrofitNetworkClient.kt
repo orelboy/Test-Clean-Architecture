@@ -7,9 +7,9 @@ import com.practicum.testcleanarchitecture.data.NetworkClient
 import com.practicum.testcleanarchitecture.data.dto.MovieCastRequest
 import com.practicum.testcleanarchitecture.data.dto.MovieDetailsRequest
 import com.practicum.testcleanarchitecture.data.dto.MoviesSearchRequest
+import com.practicum.testcleanarchitecture.data.dto.NamesSearchRequest
 import com.practicum.testcleanarchitecture.data.dto.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+
 
 class RetrofitNetworkClient(
     private val imdbService: IMDbApiService,
@@ -20,11 +20,18 @@ class RetrofitNetworkClient(
             return Response().apply { resultCode = -1 }
         }
         // Добавили ещё одну проверку
-        if ((dto !is MoviesSearchRequest) && (dto !is MovieDetailsRequest) && (dto !is MovieCastRequest)) {
+        if ((dto !is MoviesSearchRequest)
+            && (dto !is MovieDetailsRequest)
+            && (dto !is MovieCastRequest)
+            && (dto !is NamesSearchRequest)) {
             return Response().apply { resultCode = 400 }
         }
 
         val response = when (dto) {
+            is NamesSearchRequest -> {
+                imdbService.searchNames(dto.expression).execute()
+            }
+
             is MoviesSearchRequest -> {
                 imdbService.searchMovies(dto.expression).execute()
             }
