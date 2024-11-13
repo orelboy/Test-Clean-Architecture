@@ -7,11 +7,15 @@ import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.practicum.testcleanarchitecture.R
 import com.practicum.testcleanarchitecture.domain.api.NamesInteractor
 import com.practicum.testcleanarchitecture.domain.models.Person
 import com.practicum.testcleanarchitecture.presentation.names.models.NamesState
 import com.practicum.testcleanarchitecture.util.SingleLiveEvent
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class NamesViewModel(private val context: Context,
                      private val namesInteractor: NamesInteractor
@@ -19,10 +23,10 @@ class NamesViewModel(private val context: Context,
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
+        //private val SEARCH_REQUEST_TOKEN = Any()
     }
 
-    private val handler = Handler(Looper.getMainLooper())
+//    private val handler = Handler(Looper.getMainLooper())
 
     private val stateLiveData = MutableLiveData<NamesState>()
     fun observeState(): LiveData<NamesState> = stateLiveData
@@ -31,27 +35,35 @@ class NamesViewModel(private val context: Context,
     fun observeShowToast(): LiveData<String?> = showToast
 
     private var latestSearchText: String? = null
+    private var searchJob: Job? = null
 
-    override fun onCleared() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-    }
+//    override fun onCleared() {
+//        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
     fun searchDebounce(changedText: String) {
         if (latestSearchText == changedText) {
             return
         }
 
-        this.latestSearchText = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+        latestSearchText = changedText
 
-        val searchRunnable = Runnable { searchRequest(changedText) }
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            searchRequest(changedText)
+        }
 
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime,
-        )
+//        this.latestSearchText = changedText
+//        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+//
+//        val searchRunnable = Runnable { searchRequest(changedText) }
+//
+//        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
+//        handler.postAtTime(
+//            searchRunnable,
+//            SEARCH_REQUEST_TOKEN,
+//            postTime,
+//        )
     }
 
     private fun searchRequest(newSearchText: String) {

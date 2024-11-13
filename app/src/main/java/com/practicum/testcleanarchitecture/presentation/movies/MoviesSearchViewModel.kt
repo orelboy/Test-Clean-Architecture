@@ -10,11 +10,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.practicum.testcleanarchitecture.R
 import com.practicum.testcleanarchitecture.domain.api.MoviesInteractor
 import com.practicum.testcleanarchitecture.domain.models.Movie
 import com.practicum.testcleanarchitecture.presentation.movies.models.MoviesState
 import com.practicum.testcleanarchitecture.util.SingleLiveEvent
+import com.practicum.testcleanarchitecture.util.debounce
 
 
 class MoviesSearchViewModel(
@@ -24,10 +26,10 @@ class MoviesSearchViewModel(
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
+        //private val SEARCH_REQUEST_TOKEN = Any()
     }
 
-    private val handler = Handler(Looper.getMainLooper())
+    //private val handler = Handler(Looper.getMainLooper())
 
     private val stateLiveData = MutableLiveData<MoviesState>()
     fun observeState(): LiveData<MoviesState> = mediatorStateLiveData
@@ -48,28 +50,37 @@ class MoviesSearchViewModel(
     private val showToast = SingleLiveEvent<String>()
     fun observeShowToast(): LiveData<String> = showToast
 
-    override fun onCleared() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-    }
+//    override fun onCleared() {
+//        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+//    }
 
     private var lastSearchText: String? = null
 
+    private val movieSearchDebounce = debounce<String>(SEARCH_DEBOUNCE_DELAY, viewModelScope, true) { changedText ->
+        searchRequest(changedText)
+    }
+
     fun searchDebounce(changedText: String) {
-        if (lastSearchText == changedText) {
-            return
+//        if (lastSearchText == changedText) {
+//            return
+//        }
+//
+//        this.lastSearchText = changedText
+//        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+//
+//        val searchRunnable = Runnable { searchRequest(changedText) }
+//
+//        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
+//        handler.postAtTime(
+//            searchRunnable,
+//            SEARCH_REQUEST_TOKEN,
+//            postTime,
+//        )
+
+        if (lastSearchText != changedText) {
+            lastSearchText = changedText
+            movieSearchDebounce(changedText)
         }
-
-        this.lastSearchText = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-
-        val searchRunnable = Runnable { searchRequest(changedText) }
-
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime,
-        )
     }
 
     private fun searchRequest(newSearchText: String) {
