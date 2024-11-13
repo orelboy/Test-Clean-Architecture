@@ -1,9 +1,6 @@
 package com.practicum.testcleanarchitecture.presentation.names
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -70,43 +67,50 @@ class NamesViewModel(private val context: Context,
         if (newSearchText.isNotEmpty()) {
             renderState(NamesState.Loading)
 
-            namesInteractor.searchNames(newSearchText, object : NamesInteractor.NamesConsumer {
-                override fun consume(foundNames: List<Person>?, errorMessage: String?) {
-                    val persons = mutableListOf<Person>()
-                    if (foundNames != null) {
-                        persons.addAll(foundNames)
+            viewModelScope.launch {
+                namesInteractor
+                    .searchNames(newSearchText)
+                    .collect { pair ->
+                        // Код обработки полученных данных
+                        processResult(pair.first, pair.second)
+
                     }
+            }
+        }
+    }
 
-                    when {
-                        errorMessage != null -> {
-                            renderState(
-                                NamesState.Error(
-                                    message = context.getString(
-                                        R.string.something_went_wrong),
-                                )
-                            )
-                            showToast.postValue(errorMessage)
-                        }
+    private fun processResult(foundNames: List<Person>?, errorMessage: String?) {
+        val persons = mutableListOf<Person>()
+        if (foundNames != null) {
+            persons.addAll(foundNames)
+        }
 
-                        persons.isEmpty() -> {
-                            renderState(
-                                NamesState.Empty(
-                                    message = context.getString(R.string.nothing_found),
-                                )
-                            )
-                        }
+        when {
+            errorMessage != null -> {
+                renderState(
+                    NamesState.Error(
+                        message = context.getString(
+                            R.string.something_went_wrong),
+                    )
+                )
+                showToast.postValue(errorMessage)
+            }
 
-                        else -> {
-                            renderState(
-                                NamesState.Content(
-                                    persons = persons,
-                                )
-                            )
-                        }
-                    }
+            persons.isEmpty() -> {
+                renderState(
+                    NamesState.Empty(
+                        message = context.getString(R.string.nothing_found),
+                    )
+                )
+            }
 
-                }
-            })
+            else -> {
+                renderState(
+                    NamesState.Content(
+                        persons = persons,
+                    )
+                )
+            }
         }
     }
 

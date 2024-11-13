@@ -9,6 +9,8 @@ import com.practicum.testcleanarchitecture.data.dto.MovieDetailsRequest
 import com.practicum.testcleanarchitecture.data.dto.MoviesSearchRequest
 import com.practicum.testcleanarchitecture.data.dto.NamesSearchRequest
 import com.practicum.testcleanarchitecture.data.dto.Response
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 class RetrofitNetworkClient(
@@ -23,14 +25,15 @@ class RetrofitNetworkClient(
         if ((dto !is MoviesSearchRequest)
             && (dto !is MovieDetailsRequest)
             && (dto !is MovieCastRequest)
-            && (dto !is NamesSearchRequest)) {
+            //&& (dto !is NamesSearchRequest)
+            ){
             return Response().apply { resultCode = 400 }
         }
 
         val response = when (dto) {
-            is NamesSearchRequest -> {
-                imdbService.searchNames(dto.expression).execute()
-            }
+//            is NamesSearchRequest -> {
+//                imdbService.searchNames(dto.expression).execute()
+//            }
 
             is MoviesSearchRequest -> {
                 imdbService.searchMovies(dto.expression).execute()
@@ -50,6 +53,26 @@ class RetrofitNetworkClient(
             body.apply { resultCode = response.code() }
         } else {
             Response().apply { resultCode = response.code() }
+        }
+    }
+
+    override suspend fun doRequestSuspend(dto: Any): Response {
+        if (isConnected() == false) {
+            return Response().apply { resultCode = -1 }
+        }
+
+        if (dto !is NamesSearchRequest) {
+            return Response().apply { resultCode = 400 }
+        }
+
+        return  withContext(Dispatchers.IO) {
+            try {
+                val response = imdbService.searchNames(dto.expression)
+                response.apply { resultCode = 200 }
+            }catch (e: Throwable){
+                Response().apply { resultCode = 500 }
+
+            }
         }
     }
 
