@@ -10,8 +10,8 @@ import com.practicum.testcleanarchitecture.data.db.entity.MovieEntity
 interface MovieDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMovies(movies: List<MovieEntity>)
+    fun insertMovies(movies: List<MovieEntity>)
 
     @Query("SELECT * FROM movie_table")
-    suspend fun getMovies(): List<MovieEntity>
+    fun getMovies(): List<MovieEntity>
 }

@@ -26,7 +26,11 @@ class HistoryFragment : Fragment() {
     private lateinit var historyList: RecyclerView
     private lateinit var progressBar: ProgressBar
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = FragmentHistoryBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -40,7 +44,8 @@ class HistoryFragment : Fragment() {
         historyList = binding.historyList
         progressBar = binding.progressBar
 
-        historyList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        historyList.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         historyList.adapter = adapter
 
         viewModel.fillData()

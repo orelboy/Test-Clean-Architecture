@@ -9,6 +9,8 @@ import com.practicum.testcleanarchitecture.R
 import com.practicum.testcleanarchitecture.domain.api.SearchHistoryInteractor
 import com.practicum.testcleanarchitecture.domain.models.Movie
 import com.practicum.testcleanarchitecture.presentation.history.models.HistoryState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class HistoryViewModel(
@@ -21,12 +23,12 @@ class HistoryViewModel(
     fun observeState(): LiveData<HistoryState> = stateLiveData
 
     fun fillData() {
-        renderState(HistoryState.Loading)
+       // renderState(HistoryState.Loading)
         viewModelScope.launch {
-            historyInteractor
-                .historyMovies()
-                .collect { movies ->
-                    processResult(movies)
+            historyInteractor.historyMovies()
+                .flowOn(Dispatchers.IO)
+                .collect {
+                    processResult(it)
                 }
         }
     }
