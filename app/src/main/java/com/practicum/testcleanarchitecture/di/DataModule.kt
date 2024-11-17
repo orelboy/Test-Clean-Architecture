@@ -1,11 +1,13 @@
 package com.practicum.testcleanarchitecture.di
 
 import android.content.Context
+import androidx.room.Room
 import com.google.gson.Gson
 import com.practicum.testcleanarchitecture.data.LocalStorage
 import com.practicum.testcleanarchitecture.data.NetworkClient
 import com.practicum.testcleanarchitecture.data.SearchHistoryStorage
 import com.practicum.testcleanarchitecture.data.SharedPreferencesSearchHistoryStorage
+import com.practicum.testcleanarchitecture.data.db.AppDatabase
 import com.practicum.testcleanarchitecture.data.network.IMDbApiService
 import com.practicum.testcleanarchitecture.data.network.RetrofitNetworkClient
 import org.koin.android.ext.koin.androidContext
@@ -42,6 +44,11 @@ val dataModule = module {
 
     single<NetworkClient> {
         RetrofitNetworkClient(imdbService = get(), context = androidContext())
+    }
+
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .build()
     }
 
 }

@@ -2,6 +2,7 @@
     <string name="app_name">Test Clean Architecture</string>
     <string name="nothing_found">nothing_found!!!!!!!</string>
     <string name="something_went_wrong">something_went_wrong!!!!!!</string>
+    <string name="nothing_searched_yet">nothing_searched_yet!!!!!!</string>
     <string name="poster">ПОСТЕР</string>
     <string name="details">О ФИЛЬМЕ</string>
     <string name="rating">Рейтинг IMDb:</string>
