@@ -46,4 +46,9 @@
         android:name="com.practicum.testcleanarchitecture.ui.names.NamesFragment"
         android:label="fragment_names"
         tools:layout="@layout/fragment_names" />
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.practicum.testcleanarchitecture.ui.history.HistoryFragment"
+        android:label="fragment_history"
+        tools:layout="@layout/fragment_history" />
 </navigation>

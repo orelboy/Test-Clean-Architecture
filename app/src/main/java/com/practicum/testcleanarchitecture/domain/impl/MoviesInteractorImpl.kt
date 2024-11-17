@@ -3,40 +3,36 @@ package com.practicum.testcleanarchitecture.domain.impl
 import com.practicum.testcleanarchitecture.domain.api.MoviesInteractor
 import com.practicum.testcleanarchitecture.domain.api.MoviesRepository
 import com.practicum.testcleanarchitecture.domain.models.Movie
+import com.practicum.testcleanarchitecture.domain.models.MovieCast
+import com.practicum.testcleanarchitecture.domain.models.MovieDetails
 import com.practicum.testcleanarchitecture.util.Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import java.util.concurrent.Executors
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 
 class MoviesInteractorImpl(private val repository: MoviesRepository) : MoviesInteractor {
 
-    private val executor = Executors.newCachedThreadPool()
-
-    override fun searchMovies(expression: String): Flow<Resource<List<Movie>>> {
-//        executor.execute {
-//            when(val resource = repository.searchMovies(expression)) {
-//                is Resource.Success -> { consumer.consume(resource.data, null) }
-//                is Resource.Error -> { consumer.consume(null, resource.message) }
-//            }
-//        }
-        return repository.searchMovies(expression)
+    override fun searchMovies(expression: String): Flow<Pair<List<Movie>?, String?>> {
+        return repository
+            .searchMovies(expression)
+            .flowOn(Dispatchers.IO)
+            .map { result ->
+                when (result) {
+                    is Resource.Success -> Pair(result.data, null)
+                    is Resource.Error -> Pair(null, result.message)
+                }
+            }
     }
 
-    override fun getMoviesDetails(movieId: String, consumer: MoviesInteractor.MovieDetailsConsumer) {
-        executor.execute {
-            when(val resource = repository.getMovieDetails(movieId)) {
-                is Resource.Success -> { consumer.consume(resource.data, null) }
-                is Resource.Error -> { consumer.consume(resource.data, resource.message) }
-            }
-        }
+    override fun getMoviesDetails(movieId: String): Flow<Pair<MovieDetails?, String?>> {
+        return repository.getMovieDetails(movieId)
+            .map { result -> mapResult(result) }
     }
 
-    override fun getMovieCast(movieId: String, consumer: MoviesInteractor.MovieCastConsumer) {
-        executor.execute {
-            when(val resource = repository.getMovieCast(movieId)) {
-                is Resource.Success -> { consumer.consume(resource.data, null) }
-                is Resource.Error -> { consumer.consume(resource.data, resource.message) }
-            }
-        }
+    override fun getMovieCast(movieId: String): Flow<Pair<MovieCast?, String?>> {
+        return repository.getMovieCast(movieId)
+            .map { result -> mapResult(result) }
     }
 
     override fun addMovieToFavorites(movie: Movie) {
@@ -45,5 +41,12 @@ class MoviesInteractorImpl(private val repository: MoviesRepository) : MoviesInt
 
     override fun removeMovieFromFavorites(movie: Movie) {
         repository.removeMovieFromFavorites(movie)
+    }
+
+    private fun <T> mapResult(result: Resource<T>): Pair<T?, String?> {
+        return when (result) {
+            is Resource.Success -> Pair(result.data, null)
+            is Resource.Error -> Pair(null, result.message)
+        }
     }
 }

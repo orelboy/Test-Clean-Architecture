@@ -3,8 +3,10 @@ package com.practicum.testcleanarchitecture.presentation.cast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.practicum.testcleanarchitecture.domain.api.MoviesInteractor
 import com.practicum.testcleanarchitecture.domain.models.MovieCast
+import kotlinx.coroutines.launch
 
 // В конструктор пробросили необходимые для запроса параметры
 class MoviesCastViewModel(
@@ -22,19 +24,18 @@ class MoviesCastViewModel(
         stateLiveData.postValue(MoviesCastState.Loading)
 
         // Выполняем сетевой запрос
-        moviesInteractor.getMovieCast(movieId, object : MoviesInteractor.MovieCastConsumer {
+        viewModelScope.launch {
+            moviesInteractor.getMovieCast(movieId)
+                .collect { pair -> processResult(pair.first, pair.second) }
+        }
+    }
 
-            // Обрабатываем результат этого запроса
-            override fun consume(movieCast: MovieCast?, errorMessage: String?) {
-                if (movieCast != null) {
-                    // добавляем конвертацию в UiState
-                    stateLiveData.postValue(castToUiStateContent(movieCast))
-                } else {
-                    stateLiveData.postValue(MoviesCastState.Error(errorMessage ?: "Unknown error"))
-                }
-            }
-
-        })
+    private fun processResult(movieCast: MovieCast?, errorMessage: String?) {
+        if (movieCast != null) {
+            stateLiveData.postValue(castToUiStateContent(movieCast))
+        } else {
+            stateLiveData.postValue(MoviesCastState.Error(errorMessage ?: "Unknown error"))
+        }
     }
 
     private fun castToUiStateContent(cast: MovieCast): MoviesCastState {

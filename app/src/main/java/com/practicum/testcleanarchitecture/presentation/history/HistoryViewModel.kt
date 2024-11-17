@@ -1,4 +1,4 @@
-package com.practicum.testcleanarchitecture.presentation.movies
+package com.practicum.testcleanarchitecture.presentation.history
 
 import android.content.Context
 import androidx.lifecycle.LiveData
@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.practicum.testcleanarchitecture.R
 import com.practicum.testcleanarchitecture.domain.api.SearchHistoryInteractor
 import com.practicum.testcleanarchitecture.domain.models.Movie
-import com.practicum.testcleanarchitecture.presentation.movies.models.HistoryState
+import com.practicum.testcleanarchitecture.presentation.history.models.HistoryState
 import kotlinx.coroutines.launch
 
 class HistoryViewModel(

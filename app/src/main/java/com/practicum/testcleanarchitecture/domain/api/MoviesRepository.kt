@@ -11,7 +11,7 @@ interface MoviesRepository {
     fun addMovieToFavorites(movie: Movie)
     fun removeMovieFromFavorites(movie: Movie)
 
-    fun getMovieDetails(movieId: String): Resource<MovieDetails>
-    fun getMovieCast(movieId: String): Resource<MovieCast>
+    fun getMovieDetails(movieId: String): Flow<Resource<MovieDetails>>
+    fun getMovieCast(movieId: String): Flow<Resource<MovieCast>>
 
 }

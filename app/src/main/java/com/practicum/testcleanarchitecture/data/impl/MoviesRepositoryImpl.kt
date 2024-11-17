@@ -24,6 +24,7 @@ class MoviesRepositoryImpl(
     private val networkClient: NetworkClient,
     private val localStorage: LocalStorage,
     private val movieCastConverter: MovieCastConverter,
+    //Зависимости db
     private val appDatabase: AppDatabase,
     private val movieDbConvertor: MovieDbConvertor,
     ) : MoviesRepository {
@@ -65,55 +66,59 @@ class MoviesRepositoryImpl(
         appDatabase.movieDao().insertMovies(movieEntities)
     }
 
-    override fun getMovieDetails(movieId: String): Resource<MovieDetails> {
+    override fun getMovieDetails(movieId: String): Flow<Resource<MovieDetails>> = flow {
         val response = networkClient.doRequest(MovieDetailsRequest(movieId))
-        return when (response.resultCode) {
+         when (response.resultCode) {
             -1 -> {
-                Resource.Error("Проверьте подключение к интернету")
+                emit(Resource.Error("Проверьте подключение к интернету"))
             }
 
             200 -> {
                 with(response as MovieDetailsResponse) {
-                    Resource.Success(
-                        MovieDetails(
-                            id = id,
-                            title = title,
-                            imDbRating = imDbRating,
-                            year = year,
-                            countries = countries,
-                            genres = genres,
-                            directors = directors,
-                            writers = writers,
-                            stars = stars,
-                            plot = plot,
+                    emit(
+                        Resource.Success(
+                            MovieDetails(
+                                id = id,
+                                title = title,
+                                imDbRating = imDbRating,
+                                year = year,
+                                countries = countries,
+                                genres = genres,
+                                directors = directors,
+                                writers = writers,
+                                stars = stars,
+                                plot = plot,
+                            )
                         )
                     )
                 }
             }
 
             else -> {
-                Resource.Error("Ошибка сервера")
+                emit(Resource.Error("Ошибка сервера"))
 
             }
         }
     }
 
     // Добавили новый метод для получения состава участников
-    override fun getMovieCast(movieId: String): Resource<MovieCast> {
+    override fun getMovieCast(movieId: String): Flow<Resource<MovieCast>> = flow {
         // Поменяли объект dto на нужный Request-объект
         val response = networkClient.doRequest(MovieCastRequest(movieId))
-        return when (response.resultCode) {
+         when (response.resultCode) {
             -1 -> {
-                Resource.Error("Проверьте подключение к интернету")
+                emit(Resource.Error("Проверьте подключение к интернету"))
             }
             200 -> {
-                // Осталось написать конвертацию!
-                Resource.Success(
-                    data = movieCastConverter.convert(response as MovieCastResponse)
+                emit(
+                    // Осталось написать конвертацию!
+                    Resource.Success(
+                        data = movieCastConverter.convert(response as MovieCastResponse)
+                    )
                 )
             }
             else -> {
-                Resource.Error("Ошибка сервера")
+                emit(Resource.Error("Ошибка сервера"))
             }
         }
     }

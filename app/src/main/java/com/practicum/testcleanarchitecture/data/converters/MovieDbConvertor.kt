@@ -10,6 +10,6 @@ class MovieDbConvertor {
     }
 
     fun map(movie: MovieEntity): Movie {
-        return Movie(movie.id, movie.resultType, movie.image, movie.title, movie.description, true)
+        return Movie(movie.id, movie.resultType, movie.image, movie.title, movie.description)
     }
 }
