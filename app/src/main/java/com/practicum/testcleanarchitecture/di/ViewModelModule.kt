@@ -4,6 +4,7 @@ import com.practicum.testcleanarchitecture.presentation.cast.MoviesCastViewModel
 import com.practicum.testcleanarchitecture.presentation.movies.MoviesSearchViewModel
 import com.practicum.testcleanarchitecture.presentation.details.PosterViewModel
 import com.practicum.testcleanarchitecture.presentation.details.AboutViewModel
+import com.practicum.testcleanarchitecture.presentation.history.HistoryViewModel
 import com.practicum.testcleanarchitecture.presentation.names.NamesViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
@@ -34,5 +35,7 @@ val viewModelModule = module {
     viewModel {
         NamesViewModel(androidContext(), get())
     }
+
+    viewModel { HistoryViewModel(context = androidContext(), historyInteractor = get()) }
 
 }
