@@ -17,8 +17,10 @@ import com.practicum.testcleanarchitecture.domain.models.Movie
 import com.practicum.testcleanarchitecture.domain.models.MovieCast
 import com.practicum.testcleanarchitecture.domain.models.MovieDetails
 import com.practicum.testcleanarchitecture.util.Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class MoviesRepositoryImpl(
     private val networkClient: NetworkClient,

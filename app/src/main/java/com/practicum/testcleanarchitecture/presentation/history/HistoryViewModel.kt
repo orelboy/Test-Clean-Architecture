@@ -23,7 +23,7 @@ class HistoryViewModel(
     fun observeState(): LiveData<HistoryState> = stateLiveData
 
     fun fillData() {
-      //  renderState(HistoryState.Loading)
+        renderState(HistoryState.Loading)
         viewModelScope.launch {
             historyInteractor.historyMovies()
                 .flowOn(Dispatchers.IO)
